@@ -39,7 +39,7 @@ setup(
     ],
     license='MIT',
     install_requires=[
-        'django>=1.6<1.7',
+        'django>=1.6,<1.7',
         'django-entity>=1.5.1',
     ],
     tests_require=[
@@ -48,6 +48,7 @@ setup(
         'south',
         'mock>=1.0.1',
         'coverage>=3.7.1',
+        'django-dynamic-fixture',
     ],
     test_suite='run_tests.run_tests',
     include_package_data=True,
