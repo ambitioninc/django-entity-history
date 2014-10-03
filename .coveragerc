@@ -1,0 +1,16 @@
+[run]
+branch = True
+omit =
+    entity_history/migrations/*
+    entity_history/tests/*
+    entity_history/version.py
+source = entity_history
+[report]
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise NotImplementedError
+fail_under = 100
+show_missing = 1
