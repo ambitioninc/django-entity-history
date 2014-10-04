@@ -17,10 +17,23 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'entity_history', ['EntityActivationEvent'])
 
+        # Adding model 'EntityRelationshipActivationEvent'
+        db.create_table(u'entity_history_entityrelationshipactivationevent', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('sub_entity', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['entity.Entity'])),
+            ('super_entity', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['entity.Entity'])),
+            ('time', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
+            ('was_activated', self.gf('django.db.models.fields.BooleanField')()),
+        ))
+        db.send_create_signal(u'entity_history', ['EntityRelationshipActivationEvent'])
+
 
     def backwards(self, orm):
         # Deleting model 'EntityActivationEvent'
         db.delete_table(u'entity_history_entityactivationevent')
+
+        # Deleting model 'EntityRelationshipActivationEvent'
+        db.delete_table(u'entity_history_entityrelationshipactivationevent')
 
 
     models = {
@@ -51,6 +64,14 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'EntityActivationEvent'},
             'entity': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['entity.Entity']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'time': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
+            'was_activated': ('django.db.models.fields.BooleanField', [], {})
+        },
+        u'entity_history.entityrelationshipactivationevent': {
+            'Meta': {'object_name': 'EntityRelationshipActivationEvent'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'sub_entity': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': u"orm['entity.Entity']"}),
+            'super_entity': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': u"orm['entity.Entity']"}),
             'time': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
             'was_activated': ('django.db.models.fields.BooleanField', [], {})
         }
