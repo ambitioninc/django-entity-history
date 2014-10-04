@@ -22,3 +22,42 @@ class EntityRelationshipActivationEvent(models.Model):
         Entity, related_name='+', help_text='The super entity in the relationship that was activated / deactivated')
     time = models.DateTimeField(db_index=True, help_text='The time of the activation / deactivation')
     was_activated = models.BooleanField(help_text='True if the entity was activated, false otherwise')
+
+
+def get_sub_entities_at_time(super_entity_ids, times):
+    """
+    Constructs the sub entities of super entities at points in time.
+
+    :param super_entity_ids: An iterable of super entity ids
+    :param times: An iterable of datetime objects
+    :returns: A dictionary keyed on (super_entity_id, time) tuples. Each key has a set of all entity ids that were sub
+       entities of the super entity during that time.
+    """
+    er_events = EntityRelationshipActivationEvent.objects.filter(super_entity_id__in=super_entity_ids).order_by('time')
+
+    ers = {
+        (se_id, t): set()
+        for se_id in super_entity_ids
+        for t in times
+    }
+
+    # For every time, construct a set of sub entities that were sub to the super entities
+    for t in times:
+        # Traverse the entity relationship events in ascending time, keeping track of if a sub entity was in a
+        # relationship before time t
+        for er_event in filter(lambda er: er.time < t, er_events):
+            if er_event.was_activated:
+                ers[(er_event.super_entity_id, t)].add(er_event.sub_entity_id)
+            else:
+                ers[(er_event.super_entity_id, t)].discard(er_event.sub_entity_id)
+
+    return ers
+
+
+class EntityHistory(Entity):
+    """
+    A proxy model for entities that overrides the default model manager. This model manager provides additional
+    functionality to query entities and entity relationships at points in time.
+    """
+    class Meta:
+        proxy = True
