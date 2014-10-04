@@ -41,7 +41,6 @@ def get_sub_entities_at_time(super_entity_ids, times):
         for t in times
     }
 
-    # For every time, construct a set of sub entities that were sub to the super entities
     for t in times:
         # Traverse the entity relationship events in ascending time, keeping track of if a sub entity was in a
         # relationship before time t
@@ -52,6 +51,31 @@ def get_sub_entities_at_time(super_entity_ids, times):
                 ers[(er_event.super_entity_id, t)].discard(er_event.sub_entity_id)
 
     return ers
+
+
+def get_entities_at_time(times):
+    """
+    Constructs the entities that were active at points in time.
+
+    :param times: An iterable of datetime objects
+    :returns: A dictionary keyed on time values. Each key has a set of all entity ids that were active at the time.
+    """
+    e_events = EntityActivationEvent.objects.order_by('time')
+
+    es = {
+        t: set()
+        for t in times
+    }
+
+    for t in times:
+        # Traverse the entity events in ascending time, keeping track of if an entity was active before time t
+        for e_event in filter(lambda e: e.time < t, e_events):
+            if e_event.was_activated:
+                es[t].add(e_event.entity_id)
+            else:
+                es[t].discard(e_event.entity_id)
+
+    return es
 
 
 class EntityHistory(Entity):
