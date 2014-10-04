@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         db.create_table(u'entity_history_entityactivationevent', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('entity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['entity.Entity'])),
-            ('time', self.gf('django.db.models.fields.DateTimeField')()),
+            ('time', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
             ('was_activated', self.gf('django.db.models.fields.BooleanField')()),
         ))
         db.send_create_signal(u'entity_history', ['EntityActivationEvent'])
@@ -51,7 +51,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'EntityActivationEvent'},
             'entity': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['entity.Entity']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'time': ('django.db.models.fields.DateTimeField', [], {}),
+            'time': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
             'was_activated': ('django.db.models.fields.BooleanField', [], {})
         }
     }

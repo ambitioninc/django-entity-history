@@ -16,7 +16,7 @@ class Migration(DataMigration):
             '\n'
             'IF (TG_OP = \'INSERT\' OR (TG_OP = \'UPDATE\' AND OLD.is_active != NEW.is_active)) THEN\n'
             '    INSERT INTO entity_history_entityactivationevent(entity_id, time, was_activated)\n'
-            '    VALUES (NEW.id, CAST(NOW() at time zone \'utc\' AS timestamp), NEW.is_active);\n'
+            '    VALUES (NEW.id, CAST(CLOCK_TIMESTAMP() at time zone \'utc\' AS timestamp), NEW.is_active);\n'
             'END IF;\n'
             '\n'
             'RETURN NEW;\n'
@@ -65,7 +65,7 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'EntityActivationEvent'},
             'entity': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['entity.Entity']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'time': ('django.db.models.fields.DateTimeField', [], {}),
+            'time': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
             'was_activated': ('django.db.models.fields.BooleanField', [], {})
         }
     }
