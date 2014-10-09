@@ -24,16 +24,18 @@ class EntityRelationshipActivationEvent(models.Model):
     was_activated = models.BooleanField(help_text='True if the entity was activated, false otherwise')
 
 
-def get_sub_entities_at_times(super_entity_ids, times):
+def get_sub_entities_at_times(super_entity_ids, times, filter_by_entity_ids=None):
     """
     Constructs the sub entities of super entities at points in time.
 
     :param super_entity_ids: An iterable of super entity ids
     :param times: An iterable of datetime objects
+    :param filter_by_entity_ids: An iterable of entity ids over which to filter the results
     :returns: A dictionary keyed on (super_entity_id, time) tuples. Each key has a set of all entity ids that were sub
        entities of the super entity during that time.
     """
-    er_events = EntityRelationshipActivationEvent.objects.filter(super_entity_id__in=super_entity_ids).order_by('time')
+    er_events = EntityRelationshipActivationEvent.objects.filter(
+        super_entity_id__in=super_entity_ids, sub_entity_id__in=filter_by_entity_ids).order_by('time')
 
     ers = {
         (se_id, t): set()
@@ -53,14 +55,14 @@ def get_sub_entities_at_times(super_entity_ids, times):
     return ers
 
 
-def get_entities_at_times(times):
+def get_entities_at_times(times, filter_by_entity_ids=None):
     """
     Constructs the entities that were active at points in time.
 
     :param times: An iterable of datetime objects
     :returns: A dictionary keyed on time values. Each key has a set of all entity ids that were active at the time.
     """
-    e_events = EntityActivationEvent.objects.order_by('time')
+    e_events = EntityActivationEvent.objects.filter(entity_id__in=filter_by_entity_ids).order_by('time')
 
     es = {
         t: set()
