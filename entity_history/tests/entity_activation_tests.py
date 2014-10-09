@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.test import TestCase
-from django_dynamic_fixture import G
+from django_dynamic_fixture import G, N
 from entity.models import Entity
 
 from entity_history import EntityActivationEvent
@@ -13,6 +13,45 @@ class EntityActivationTriggerTests(TestCase):
     are activated and deactivated. This is accomplished by a postgres database
     trigger that is installed in a data migration.
     """
+    def test_bulk_create(self):
+        es = [N(Entity, is_active=True) for i in range(3)]
+        t1 = datetime.utcnow()
+        Entity.objects.bulk_create(es)
+        t2 = datetime.utcnow()
+        es = list(Entity.objects.order_by('id'))
+
+        events = list(EntityActivationEvent.objects.all())
+        self.assertTrue(len(events), 3)
+        for i in range(3):
+            self.assertEquals(events[i].entity, es[i])
+            self.assertTrue(t1 <= events[i].time <= t2)
+
+    def test_bulk_create_update(self):
+        es = [N(Entity, is_active=True) for i in range(3)]
+        t1 = datetime.utcnow()
+        Entity.objects.bulk_create(es)
+        t2 = datetime.utcnow()
+        es = list(Entity.objects.order_by('id'))
+
+        Entity.objects.update(is_active=False)
+        t3 = datetime.utcnow()
+
+        events = list(EntityActivationEvent.objects.all())
+        self.assertTrue(len(events), 6)
+        for i in range(3):
+            self.assertEquals(events[i].entity, es[i])
+            self.assertTrue(t1 <= events[i].time <= t2)
+            self.assertTrue(events[i].was_activated)
+
+        # The entities deactivation order is dependent on the DB. Populate
+        # all deactivated entities and verify they are the same as the entities
+        deactivated = []
+        for i in range(3, 6):
+            self.assertTrue(t2 <= events[i].time <= t3)
+            self.assertFalse(events[i].was_activated)
+            deactivated.append(events[i].entity)
+        self.assertEquals(set(deactivated), set(es))
+
     def test_entity_creation_activated(self):
         t1 = datetime.utcnow()
         e = G(Entity, is_active=True)
