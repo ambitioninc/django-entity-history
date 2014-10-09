@@ -61,6 +61,7 @@ def get_entities_at_times(times, filter_by_entity_ids=None):
     Constructs the entities that were active at points in time.
 
     :param times: An iterable of datetime objects
+    :param filter_by_entity_ids: An iterable of entity ids over which to filter the results
     :returns: A dictionary keyed on time values. Each key has a set of all entity ids that were active at the time.
     """
     e_events = EntityActivationEvent.objects.order_by('time')
