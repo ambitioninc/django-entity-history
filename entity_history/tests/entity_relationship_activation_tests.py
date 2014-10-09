@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.test import TestCase
-from django_dynamic_fixture import G
+from django_dynamic_fixture import G, N
 from entity.models import EntityRelationship
 
 from entity_history import EntityRelationshipActivationEvent
@@ -13,6 +13,35 @@ class EntityRelationshipActivationTriggerTests(TestCase):
     are activated and deactivated. This is accomplished by a postgres database
     trigger that is installed in a data migration.
     """
+    def test_bulk_create(self):
+        ers = [N(EntityRelationship) for i in range(3)]
+        t1 = datetime.utcnow()
+        EntityRelationship.objects.bulk_create(ers)
+        t2 = datetime.utcnow()
+
+        events = list(EntityRelationshipActivationEvent.objects.all())
+        self.assertTrue(len(events), 3)
+        for i in range(3):
+            self.assertTrue(events[i].was_activated)
+            self.assertTrue(t1 <= events[i].time <= t2)
+
+    def test_bulk_create_delete(self):
+        ers = [N(EntityRelationship) for i in range(3)]
+        t1 = datetime.utcnow()
+        EntityRelationship.objects.bulk_create(ers)
+        t2 = datetime.utcnow()
+        EntityRelationship.objects.all().delete()
+        t3 = datetime.utcnow()
+
+        events = list(EntityRelationshipActivationEvent.objects.all())
+        self.assertTrue(len(events), 3)
+        for i in range(3):
+            self.assertTrue(events[i].was_activated)
+            self.assertTrue(t1 <= events[i].time <= t2)
+        for i in range(3, 6):
+            self.assertFalse(events[i].was_activated)
+            self.assertTrue(t2 <= events[i].time <= t3)
+
     def test_entity_relationship_creation(self):
         t1 = datetime.utcnow()
         er = G(EntityRelationship)
