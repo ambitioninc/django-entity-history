@@ -1,5 +1,5 @@
 from django.db import models
-from entity.models import Entity
+from entity.models import Entity, EntityQuerySet, EntityManager
 
 
 class EntityActivationEvent(models.Model):
@@ -34,8 +34,9 @@ def get_sub_entities_at_times(super_entity_ids, times, filter_by_entity_ids=None
     :returns: A dictionary keyed on (super_entity_id, time) tuples. Each key has a set of all entity ids that were sub
        entities of the super entity during that time.
     """
-    er_events = EntityRelationshipActivationEvent.objects.filter(
-        super_entity_id__in=super_entity_ids, sub_entity_id__in=filter_by_entity_ids).order_by('time')
+    er_events = EntityRelationshipActivationEvent.objects.filter(super_entity_id__in=super_entity_ids).order_by('time')
+    if filter_by_entity_ids:
+        er_events = er_events.filter(sub_entity_id__in=filter_by_entity_ids)
 
     ers = {
         (se_id, t): set()
@@ -62,7 +63,9 @@ def get_entities_at_times(times, filter_by_entity_ids=None):
     :param times: An iterable of datetime objects
     :returns: A dictionary keyed on time values. Each key has a set of all entity ids that were active at the time.
     """
-    e_events = EntityActivationEvent.objects.filter(entity_id__in=filter_by_entity_ids).order_by('time')
+    e_events = EntityActivationEvent.objects.order_by('time')
+    if filter_by_entity_ids:
+        e_events = e_events.filter(entity_id__in=filter_by_entity_ids)
 
     es = {
         t: set()
@@ -80,6 +83,29 @@ def get_entities_at_times(times, filter_by_entity_ids=None):
     return es
 
 
+class EntityHistoryQuerySet(EntityQuerySet):
+    """
+    A queryset that wraps around the get_sub_entities_at_times and get_entities_at_times functions.
+    """
+    def get_sub_entities_at_times(self, super_entity_ids, times):
+        return get_sub_entities_at_times(
+            super_entity_ids, times, filter_by_entity_ids=self.values_list('id', flat=True))
+
+    def get_entities_at_times(self, times):
+        return get_entities_at_times(times, filter_by_entity_ids=self.values_list('id', flat=True))
+
+
+class EntityHistoryManager(EntityManager):
+    def get_queryset(self):
+        return EntityHistoryQuerySet(self.model)
+
+    def get_sub_entities_at_times(self, super_entity_ids, times):
+        return self.get_queryset().get_sub_entities_at_times(super_entity_ids, times)
+
+    def get_entities_at_times(self, times):
+        return self.get_queryset().get_entities_at_times(times)
+
+
 class EntityHistory(Entity):
     """
     A proxy model for entities that overrides the default model manager. This model manager provides additional
@@ -87,3 +113,5 @@ class EntityHistory(Entity):
     """
     class Meta:
         proxy = True
+
+    objects = EntityHistoryManager()

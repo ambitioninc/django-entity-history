@@ -5,7 +5,8 @@ from django_dynamic_fixture import G
 from entity.models import Entity
 
 from entity_history import (
-    get_sub_entities_at_times, EntityRelationshipActivationEvent, get_entities_at_times, EntityActivationEvent
+    get_sub_entities_at_times, EntityRelationshipActivationEvent, get_entities_at_times, EntityActivationEvent,
+    EntityHistory
 )
 
 
@@ -130,6 +131,142 @@ class GetSubEntitiesAtTimesTest(TestCase):
             time=datetime(2013, 3, 4, 13))
 
         res = get_sub_entities_at_times(
+            [super_e.id], [datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
+
+        self.assertEquals(res, {
+            (super_e.id, datetime(2013, 2, 2)): set([sub_e1.id]),
+            (super_e.id, datetime(2013, 2, 4, 13)): set([sub_e1.id, sub_e2.id]),
+            (super_e.id, datetime(2013, 3, 5)): set([sub_e2.id]),
+        })
+
+    def test_w_mulitple_activation_events_mulitple_sub_e_returned_w_filter(self):
+        super_e = G(Entity)
+        sub_e1 = G(Entity)
+        sub_e2 = G(Entity)
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 1))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 3))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 4))
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 4, 12))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 3, 4, 12))
+
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 2, 4))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 2, 20))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 3, 4))
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 3, 4, 12))
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 3, 4, 13))
+
+        res = get_sub_entities_at_times(
+            [super_e.id], [datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)],
+            filter_by_entity_ids=[sub_e2.id])
+
+        self.assertEquals(res, {
+            (super_e.id, datetime(2013, 2, 2)): set(),
+            (super_e.id, datetime(2013, 2, 4, 13)): set([sub_e2.id]),
+            (super_e.id, datetime(2013, 3, 5)): set([sub_e2.id]),
+        })
+
+    def test_w_mulitple_activation_events_mulitple_sub_e_returned_w_queryset_filter(self):
+        super_e = G(Entity)
+        sub_e1 = G(Entity)
+        sub_e2 = G(Entity)
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 1))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 3))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 4))
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 4, 12))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 3, 4, 12))
+
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 2, 4))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 2, 20))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 3, 4))
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 3, 4, 12))
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 3, 4, 13))
+
+        res = EntityHistory.objects.filter(id=sub_e2.id).get_sub_entities_at_times(
+            [super_e.id], [datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
+
+        self.assertEquals(res, {
+            (super_e.id, datetime(2013, 2, 2)): set(),
+            (super_e.id, datetime(2013, 2, 4, 13)): set([sub_e2.id]),
+            (super_e.id, datetime(2013, 3, 5)): set([sub_e2.id]),
+        })
+
+    def test_w_mulitple_activation_events_mulitple_sub_e_returned_w_manager(self):
+        super_e = G(Entity)
+        sub_e1 = G(Entity)
+        sub_e2 = G(Entity)
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 1))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 3))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 4))
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 2, 4, 12))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e1,
+            time=datetime(2013, 3, 4, 12))
+
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 2, 4))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 2, 20))
+        G(
+            EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 3, 4))
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 3, 4, 12))
+        G(
+            EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
+            time=datetime(2013, 3, 4, 13))
+
+        res = EntityHistory.objects.get_sub_entities_at_times(
             [super_e.id], [datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
 
         self.assertEquals(res, {
@@ -279,6 +416,79 @@ class GetEntitiesAtTimeTest(TestCase):
         G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 3, 4, 13))
 
         res = get_entities_at_times([datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
+
+        self.assertEquals(res, {
+            datetime(2013, 2, 2): set([e1.id]),
+            datetime(2013, 2, 4, 13): set([e1.id, e2.id]),
+            datetime(2013, 3, 5): set([e2.id]),
+        })
+
+    def test_w_mulitple_activation_events_mulitple_e_returned_w_filter(self):
+        e1 = G(Entity)
+        e2 = G(Entity)
+        G(EntityActivationEvent, was_activated=True, entity=e1, time=datetime(2013, 2, 1))
+        G(EntityActivationEvent, was_activated=False, entity=e1, time=datetime(2013, 2, 3))
+        G(EntityActivationEvent, was_activated=False, entity=e1, time=datetime(2013, 2, 4))
+        G(EntityActivationEvent, was_activated=True, entity=e1, time=datetime(2013, 2, 4, 12))
+        G(EntityActivationEvent, was_activated=False, entity=e1, time=datetime(2013, 3, 4, 12))
+
+        G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 2, 4))
+        G(EntityActivationEvent, was_activated=False, entity=e2, time=datetime(2013, 2, 20))
+        G(EntityActivationEvent, was_activated=False, entity=e2, time=datetime(2013, 3, 4))
+        G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 3, 4, 12))
+        G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 3, 4, 13))
+
+        res = get_entities_at_times(
+            [datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)],
+            filter_by_entity_ids=[e1.id])
+
+        self.assertEquals(res, {
+            datetime(2013, 2, 2): set([e1.id]),
+            datetime(2013, 2, 4, 13): set([e1.id]),
+            datetime(2013, 3, 5): set(),
+        })
+
+    def test_w_mulitple_activation_events_mulitple_e_returned_w_queryset_filter(self):
+        e1 = G(Entity)
+        e2 = G(Entity)
+        G(EntityActivationEvent, was_activated=True, entity=e1, time=datetime(2013, 2, 1))
+        G(EntityActivationEvent, was_activated=False, entity=e1, time=datetime(2013, 2, 3))
+        G(EntityActivationEvent, was_activated=False, entity=e1, time=datetime(2013, 2, 4))
+        G(EntityActivationEvent, was_activated=True, entity=e1, time=datetime(2013, 2, 4, 12))
+        G(EntityActivationEvent, was_activated=False, entity=e1, time=datetime(2013, 3, 4, 12))
+
+        G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 2, 4))
+        G(EntityActivationEvent, was_activated=False, entity=e2, time=datetime(2013, 2, 20))
+        G(EntityActivationEvent, was_activated=False, entity=e2, time=datetime(2013, 3, 4))
+        G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 3, 4, 12))
+        G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 3, 4, 13))
+
+        res = EntityHistory.objects.filter(id=e1.id).get_entities_at_times(
+            [datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
+
+        self.assertEquals(res, {
+            datetime(2013, 2, 2): set([e1.id]),
+            datetime(2013, 2, 4, 13): set([e1.id]),
+            datetime(2013, 3, 5): set(),
+        })
+
+    def test_w_mulitple_activation_events_mulitple_e_returned_w_manager(self):
+        e1 = G(Entity)
+        e2 = G(Entity)
+        G(EntityActivationEvent, was_activated=True, entity=e1, time=datetime(2013, 2, 1))
+        G(EntityActivationEvent, was_activated=False, entity=e1, time=datetime(2013, 2, 3))
+        G(EntityActivationEvent, was_activated=False, entity=e1, time=datetime(2013, 2, 4))
+        G(EntityActivationEvent, was_activated=True, entity=e1, time=datetime(2013, 2, 4, 12))
+        G(EntityActivationEvent, was_activated=False, entity=e1, time=datetime(2013, 3, 4, 12))
+
+        G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 2, 4))
+        G(EntityActivationEvent, was_activated=False, entity=e2, time=datetime(2013, 2, 20))
+        G(EntityActivationEvent, was_activated=False, entity=e2, time=datetime(2013, 3, 4))
+        G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 3, 4, 12))
+        G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 3, 4, 13))
+
+        res = EntityHistory.objects.get_entities_at_times(
+            [datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
 
         self.assertEquals(res, {
             datetime(2013, 2, 2): set([e1.id]),
