@@ -18,7 +18,8 @@ class Migration(DataMigration):
                 sub_entity=er.sub_entity, super_entity=er.super_entity, time=datetime.min, was_activated=True)
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        orm.EntityRelationshipActivationEvent.objects.filter(time=datetime.min).delete()
+        orm.EntityActivationEvent.objects.filter(time=datetime.min).delete()
 
     models = {
         u'contenttypes.contenttype': {
