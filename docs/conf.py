@@ -4,12 +4,21 @@
 import inspect
 import os
 import re
+import sys
 
 # -- Django configuration -------------------------------------------------
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 from settings import configure_settings
 configure_settings()
+
+
+PY2 = sys.version_info[0] == 2
+if PY2:
+    from django.utils.encoding import force_unicode
+else:
+   def force_unicode(str):
+        return str
 
 from django.utils.html import strip_tags
 
@@ -157,11 +166,11 @@ def process_django_model_docstring(app, what, name, obj, options, lines):
     
         for field in fields:
             # Decode and strip any html out of the field's help text
-            help_text = strip_tags(field.help_text)
+            help_text = strip_tags(force_unicode(field.help_text))
             
             # Decode and capitalize the verbose name, for use if there isn't
             # any help text
-            verbose_name = field.verbose_name.capitalize()
+            verbose_name = force_unicode(field.verbose_name).capitalize()
             
             if help_text:
                 # Add the model field to the end of the docstring as a param
