@@ -24,7 +24,7 @@ class EntityRelationshipActivationEvent(models.Model):
     was_activated = models.BooleanField(help_text='True if the entity was activated, false otherwise')
 
 
-def get_sub_entities_at_time(super_entity_ids, times):
+def get_sub_entities_at_times(super_entity_ids, times):
     """
     Constructs the sub entities of super entities at points in time.
 
@@ -53,7 +53,7 @@ def get_sub_entities_at_time(super_entity_ids, times):
     return ers
 
 
-def get_entities_at_time(times):
+def get_entities_at_times(times):
     """
     Constructs the entities that were active at points in time.
 

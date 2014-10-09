@@ -13,6 +13,6 @@ entity_history
 .. autoclass:: entity_history.models.EntityRelationshipActivationEvent
     :members:
 
-.. autofunction:: entity_history.models.get_sub_entities_at_time
+.. autofunction:: entity_history.models.get_entities_at_times
 
-.. autofunction:: entity_history.models.get_sub_entities_at_time
+.. autofunction:: entity_history.models.get_sub_entities_at_times

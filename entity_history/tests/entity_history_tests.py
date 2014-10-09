@@ -5,20 +5,20 @@ from django_dynamic_fixture import G
 from entity.models import Entity
 
 from entity_history import (
-    get_sub_entities_at_time, EntityRelationshipActivationEvent, get_entities_at_time, EntityActivationEvent
+    get_sub_entities_at_times, EntityRelationshipActivationEvent, get_entities_at_times, EntityActivationEvent
 )
 
 
-class GetSubEntitiesAtTimeTest(TestCase):
+class GetSubEntitiesAtTimesTest(TestCase):
     """
-    Test the get_sub_entities_at_time function.
+    Test the get_sub_entities_at_times function.
     """
     def test_no_events_no_input(self):
-        res = get_sub_entities_at_time([], [])
+        res = get_sub_entities_at_times([], [])
         self.assertEquals(res, {})
 
     def test_no_events_w_input(self):
-        res = get_sub_entities_at_time([1, 2], [datetime(2013, 4, 5), datetime(2013, 5, 6)])
+        res = get_sub_entities_at_times([1, 2], [datetime(2013, 4, 5), datetime(2013, 5, 6)])
         self.assertEquals(res, {
             (1, datetime(2013, 4, 5)): set(),
             (1, datetime(2013, 5, 6)): set(),
@@ -31,7 +31,7 @@ class GetSubEntitiesAtTimeTest(TestCase):
         G(EntityRelationshipActivationEvent, was_activated=True, super_entity=se, time=datetime(2013, 2, 1))
         G(EntityRelationshipActivationEvent, was_activated=False, super_entity=se, time=datetime(2013, 2, 2))
 
-        res = get_sub_entities_at_time([se.id], [datetime(2012, 4, 5), datetime(2012, 5, 6)])
+        res = get_sub_entities_at_times([se.id], [datetime(2012, 4, 5), datetime(2012, 5, 6)])
         self.assertEquals(res, {
             (se.id, datetime(2012, 4, 5)): set(),
             (se.id, datetime(2012, 5, 6)): set(),
@@ -47,7 +47,7 @@ class GetSubEntitiesAtTimeTest(TestCase):
             EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e,
             time=datetime(2013, 2, 3))
 
-        res = get_sub_entities_at_time([super_e.id], [datetime(2013, 2, 2), datetime(2012, 5, 6)])
+        res = get_sub_entities_at_times([super_e.id], [datetime(2013, 2, 2), datetime(2012, 5, 6)])
         self.assertEquals(res, {
             (super_e.id, datetime(2013, 2, 2)): set([sub_e.id]),
             (super_e.id, datetime(2012, 5, 6)): set(),
@@ -63,7 +63,7 @@ class GetSubEntitiesAtTimeTest(TestCase):
             EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e,
             time=datetime(2013, 2, 3))
 
-        res = get_sub_entities_at_time([super_e.id], [datetime(2013, 2, 4)])
+        res = get_sub_entities_at_times([super_e.id], [datetime(2013, 2, 4)])
         self.assertEquals(res, {
             (super_e.id, datetime(2013, 2, 4)): set(),
         })
@@ -87,7 +87,7 @@ class GetSubEntitiesAtTimeTest(TestCase):
             EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e, sub_entity=sub_e,
             time=datetime(2013, 3, 4, 12))
 
-        res = get_sub_entities_at_time([super_e.id], [datetime(2013, 2, 6), datetime(2012, 5, 6)])
+        res = get_sub_entities_at_times([super_e.id], [datetime(2013, 2, 6), datetime(2012, 5, 6)])
         self.assertEquals(res, {
             (super_e.id, datetime(2013, 2, 6)): set([sub_e.id]),
             (super_e.id, datetime(2012, 5, 6)): set(),
@@ -129,7 +129,7 @@ class GetSubEntitiesAtTimeTest(TestCase):
             EntityRelationshipActivationEvent, was_activated=True, super_entity=super_e, sub_entity=sub_e2,
             time=datetime(2013, 3, 4, 13))
 
-        res = get_sub_entities_at_time(
+        res = get_sub_entities_at_times(
             [super_e.id], [datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
 
         self.assertEquals(res, {
@@ -187,7 +187,7 @@ class GetSubEntitiesAtTimeTest(TestCase):
             EntityRelationshipActivationEvent, was_activated=False, super_entity=super_e2, sub_entity=sub_e2,
             time=datetime(2013, 12, 1))
 
-        res = get_sub_entities_at_time(
+        res = get_sub_entities_at_times(
             [super_e1.id, super_e2.id], [datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
 
         self.assertEquals(res, {
@@ -202,14 +202,14 @@ class GetSubEntitiesAtTimeTest(TestCase):
 
 class GetEntitiesAtTimeTest(TestCase):
     """
-    Test the get_entities_at_time function.
+    Test the get_entities_at_times function.
     """
     def test_no_events_no_input(self):
-        res = get_entities_at_time([])
+        res = get_entities_at_times([])
         self.assertEquals(res, {})
 
     def test_no_events_w_input(self):
-        res = get_entities_at_time([datetime(2013, 4, 5), datetime(2013, 5, 6)])
+        res = get_entities_at_times([datetime(2013, 4, 5), datetime(2013, 5, 6)])
         self.assertEquals(res, {
             datetime(2013, 4, 5): set(),
             datetime(2013, 5, 6): set(),
@@ -222,7 +222,7 @@ class GetEntitiesAtTimeTest(TestCase):
         G(EntityActivationEvent, was_activated=True, entity=e, time=datetime(2013, 2, 1))
         G(EntityActivationEvent, was_activated=False, entity=e, time=datetime(2013, 2, 2))
 
-        res = get_entities_at_time([datetime(2012, 4, 5), datetime(2012, 5, 6)])
+        res = get_entities_at_times([datetime(2012, 4, 5), datetime(2012, 5, 6)])
         self.assertEquals(res, {
             datetime(2012, 4, 5): set(),
             datetime(2012, 5, 6): set(),
@@ -233,7 +233,7 @@ class GetEntitiesAtTimeTest(TestCase):
         G(EntityActivationEvent, was_activated=True, entity=e, time=datetime(2013, 2, 1))
         G(EntityActivationEvent, was_activated=False, entity=e, time=datetime(2013, 2, 3))
 
-        res = get_entities_at_time([datetime(2013, 2, 2), datetime(2012, 5, 6)])
+        res = get_entities_at_times([datetime(2013, 2, 2), datetime(2012, 5, 6)])
         self.assertEquals(res, {
             datetime(2013, 2, 2): set([e.id]),
             datetime(2012, 5, 6): set(),
@@ -244,7 +244,7 @@ class GetEntitiesAtTimeTest(TestCase):
         G(EntityActivationEvent, was_activated=True, entity=e, time=datetime(2013, 2, 1))
         G(EntityActivationEvent, was_activated=False, entity=e, time=datetime(2013, 2, 3))
 
-        res = get_entities_at_time([datetime(2013, 2, 4)])
+        res = get_entities_at_times([datetime(2013, 2, 4)])
         self.assertEquals(res, {
             datetime(2013, 2, 4): set(),
         })
@@ -257,7 +257,7 @@ class GetEntitiesAtTimeTest(TestCase):
         G(EntityActivationEvent, was_activated=True, entity=e, time=datetime(2013, 2, 4, 12))
         G(EntityActivationEvent, was_activated=False, entity=e, time=datetime(2013, 3, 4, 12))
 
-        res = get_entities_at_time([datetime(2013, 2, 6), datetime(2012, 5, 6)])
+        res = get_entities_at_times([datetime(2013, 2, 6), datetime(2012, 5, 6)])
         self.assertEquals(res, {
             datetime(2013, 2, 6): set([e.id]),
             datetime(2012, 5, 6): set(),
@@ -278,7 +278,7 @@ class GetEntitiesAtTimeTest(TestCase):
         G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 3, 4, 12))
         G(EntityActivationEvent, was_activated=True, entity=e2, time=datetime(2013, 3, 4, 13))
 
-        res = get_entities_at_time([datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
+        res = get_entities_at_times([datetime(2013, 2, 2), datetime(2013, 2, 4, 13), datetime(2013, 3, 5)])
 
         self.assertEquals(res, {
             datetime(2013, 2, 2): set([e1.id]),
