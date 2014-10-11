@@ -6,6 +6,7 @@ Table of Contents
 
    index
    installation
+   usage
    ref/entity_history
    contributing
    release_notes

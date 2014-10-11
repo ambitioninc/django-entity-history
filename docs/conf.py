@@ -4,6 +4,7 @@
 import inspect
 import os
 import re
+import sys
 
 # -- Django configuration -------------------------------------------------
 import sys
@@ -11,8 +12,15 @@ sys.path.insert(0, os.path.abspath('..'))
 from settings import configure_settings
 configure_settings()
 
+
+PY2 = sys.version_info[0] == 2
+if PY2:
+    from django.utils.encoding import force_unicode
+else:
+   def force_unicode(str):
+        return str
+
 from django.utils.html import strip_tags
-from django.utils.encoding import force_unicode
 
 
 def get_version():
@@ -49,8 +57,8 @@ source_suffix = '.rst'
 master_doc = 'toc'
 
 # General information about the project.
-project = u'entity_history'
-copyright = u'2014, Ambition Inc.'
+project = 'entity_history'
+copyright = '2014, Ambition Inc.'
 
 # The short X.Y version.
 version = get_version()
@@ -118,8 +126,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'django-entity-history.tex', u'django-entity-history Documentation',
-   u'Wes Kendall', 'manual'),
+  ('index', 'django-entity-history.tex', 'django-entity-history Documentation',
+   'Wes Kendall', 'manual'),
 ]
 
 # -- Options for manual page output ---------------------------------------
@@ -127,8 +135,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'django-entity-history', u'django-entity-history Documentation',
-     [u'Wes Kendall'], 1)
+    ('index', 'django-entity-history', 'django-entity-history Documentation',
+     ['Wes Kendall'], 1)
 ]
 
 # -- Options for Texinfo output -------------------------------------------
@@ -137,8 +145,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'django-entity-history', u'django-entity-history Documentation',
-   u'Wes Kendall', 'django-entity-history', 'A short description',
+  ('index', 'django-entity-history', 'django-entity-history Documentation',
+   'Wes Kendall', 'django-entity-history', 'A short description',
    'Miscellaneous'),
 ]
 
@@ -167,14 +175,14 @@ def process_django_model_docstring(app, what, name, obj, options, lines):
             if help_text:
                 # Add the model field to the end of the docstring as a param
                 # using the help text as the description
-                lines.append(u':param %s: %s' % (field.attname, help_text))
+                lines.append(':param %s: %s' % (field.attname, help_text))
             else:
                 # Add the model field to the end of the docstring as a param
                 # using the verbose name as the description
-                lines.append(u':param %s: %s' % (field.attname, verbose_name))
+                lines.append(':param %s: %s' % (field.attname, verbose_name))
                 
             # Add the field's type to the docstring
-            lines.append(u':type %s: %s' % (field.attname, type(field).__name__))
+            lines.append(':type %s: %s' % (field.attname, type(field).__name__))
     
     # Return the extended docstring
     return lines  
