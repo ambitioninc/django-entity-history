@@ -20,7 +20,7 @@ def get_version():
 setup(
     name='django-entity-history',
     version=get_version(),
-    description='',
+    description='History about Django Entities',
     long_description=open('README.rst').read(),
     url='https://github.com/ambitioninc/django-entity-history',
     author='Wes Kendall',
