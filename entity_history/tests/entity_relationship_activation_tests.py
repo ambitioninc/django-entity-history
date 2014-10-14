@@ -1,18 +1,31 @@
 from datetime import datetime
 
-from django.test import TestCase
+from django.test import TransactionTestCase
 from django_dynamic_fixture import G, N
-from entity.models import EntityRelationship
+from entity.models import EntityRelationship, Entity
 
 from entity_history import EntityRelationshipActivationEvent
 
 
-class EntityRelationshipActivationTriggerTests(TestCase):
+class EntityRelationshipActivationTriggerTests(TransactionTestCase):
     """
     Tests that entity activation events are properly created when entities
     are activated and deactivated. This is accomplished by a postgres database
     trigger that is installed in a data migration.
     """
+    def test_relationship_cascade_delete(self):
+        """
+        Tests the case when an entity is deleted, which causes the relationship to
+        be cascaded. This should result in no history being stored since the entity
+        is no longer present.
+        """
+        e = G(Entity)
+        G(EntityRelationship, super_entity=e)
+        e.delete()
+
+        self.assertFalse(Entity.objects.filter(id=e.id).exists())
+        self.assertFalse(EntityRelationshipActivationEvent.objects.exists())
+
     def test_bulk_create(self):
         ers = [N(EntityRelationship) for i in range(3)]
         t1 = datetime.utcnow()
@@ -20,7 +33,7 @@ class EntityRelationshipActivationTriggerTests(TestCase):
         t2 = datetime.utcnow()
 
         events = list(EntityRelationshipActivationEvent.objects.all())
-        self.assertTrue(len(events), 3)
+        self.assertEquals(len(events), 3)
         for i in range(3):
             self.assertTrue(events[i].was_activated)
             self.assertTrue(t1 <= events[i].time <= t2)
