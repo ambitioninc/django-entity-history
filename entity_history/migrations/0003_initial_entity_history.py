@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from datetime import datetime as python_datetime
-=======
 from datetime import datetime as py_datetime
->>>>>>> 9126b7099ce0c3578cdd61c299998dab76b99f6d
 # -*- coding: utf-8 -*-
 from south.utils import datetime_utils as datetime
 from south.db import db
@@ -14,28 +10,16 @@ class Migration(DataMigration):
     def forwards(self, orm):
         # Add entity activation events for all entities
         for e in orm['entity.Entity'].objects.all():
-<<<<<<< HEAD
-            orm.EntityActivationEvent.objects.create(entity=e, time=python_datetime.min, was_activated=True)
-=======
             orm.EntityActivationEvent.objects.create(entity=e, time=py_datetime.min, was_activated=True)
->>>>>>> 9126b7099ce0c3578cdd61c299998dab76b99f6d
 
         # Add entity relationship activation events for all entities
         for er in orm['entity.EntityRelationship'].objects.all():
             orm.EntityRelationshipActivationEvent.objects.create(
-<<<<<<< HEAD
-                sub_entity=er.sub_entity, super_entity=er.super_entity, time=python_datetime.min, was_activated=True)
-
-    def backwards(self, orm):
-        orm.EntityRelationshipActivationEvent.objects.filter(time=python_datetime.min).delete()
-        orm.EntityActivationEvent.objects.filter(time=python_datetime.min).delete()
-=======
                 sub_entity=er.sub_entity, super_entity=er.super_entity, time=py_datetime.min, was_activated=True)
 
     def backwards(self, orm):
         orm.EntityRelationshipActivationEvent.objects.filter(time=py_datetime.min).delete()
         orm.EntityActivationEvent.objects.filter(time=py_datetime.min).delete()
->>>>>>> 9126b7099ce0c3578cdd61c299998dab76b99f6d
 
     models = {
         u'contenttypes.contenttype': {
