@@ -1,5 +1,5 @@
 from django.db import models
-from entity.models import Entity, EntityQuerySet, EntityManager
+from entity.models import Entity, EntityQuerySet, AllEntityManager
 
 
 class EntityActivationEvent(models.Model):
@@ -96,7 +96,7 @@ class EntityHistoryQuerySet(EntityQuerySet):
         return get_entities_at_times(times, filter_by_entity_ids=self.values_list('id', flat=True))
 
 
-class EntityHistoryManager(EntityManager):
+class AllEntityHistoryManager(AllEntityManager):
     def get_queryset(self):
         return EntityHistoryQuerySet(self.model)
 
@@ -107,6 +107,15 @@ class EntityHistoryManager(EntityManager):
         return self.get_queryset().get_entities_at_times(times)
 
 
+class ActiveEntityHistoryManager(AllEntityHistoryManager):
+    """
+    The default 'objects' on the EntityHistory model. This manager restricts all Entity queries to happen over active
+    entities.
+    """
+    def get_queryset(self):
+        return EntityHistoryQuerySet(self.model).active()
+
+
 class EntityHistory(Entity):
     """
     A proxy model for entities that overrides the default model manager. This model manager provides additional
@@ -115,4 +124,5 @@ class EntityHistory(Entity):
     class Meta:
         proxy = True
 
-    objects = EntityHistoryManager()
+    objects = ActiveEntityHistoryManager()
+    all_objects = AllEntityHistoryManager()

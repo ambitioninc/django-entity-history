@@ -21,7 +21,7 @@ class EntityRelationshipActivationTriggerTests(TransactionTestCase):
         """
         e = G(Entity)
         G(EntityRelationship, super_entity=e)
-        e.delete()
+        e.delete(force=True)
 
         self.assertFalse(Entity.objects.filter(id=e.id).exists())
         self.assertFalse(EntityRelationshipActivationEvent.objects.exists())

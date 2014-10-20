@@ -76,3 +76,5 @@ The above example is equivalent to calling:
 .. code-block:: python
 
     get_sub_entities_at_times([3], [datetime(2011, 1, 1), datetime(2011, 2, 1)], filter_by_entity_ids=[1, 2])
+
+Note that `EntityHistory` has a similar interface to `Entity` in that it only filters active entities by default. If one wishes to query for all active and inactive entities, use `EntityHistory.all_objects.all()`.
