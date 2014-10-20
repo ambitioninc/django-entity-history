@@ -40,7 +40,7 @@ setup(
     license='MIT',
     install_requires=[
         'django>=1.6,<1.7',
-        'django-entity>=1.6.1',
+        'django-entity>=1.7.0',
     ],
     tests_require=[
         'psycopg2',
