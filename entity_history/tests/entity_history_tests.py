@@ -10,6 +10,18 @@ from entity_history import (
 )
 
 
+class EntityManagerTest(TestCase):
+    def test_all_entity_history_manager_returns_active_and_inactive(self):
+        active_e = G(EntityHistory, is_active=True)
+        inactive_e = G(EntityHistory, is_active=False)
+        self.assertEquals(set([active_e, inactive_e]), set(EntityHistory.all_objects.all()))
+
+    def test_active_entity_history_manager_returns_active(self):
+        active_e = G(EntityHistory, is_active=True)
+        G(Entity, is_active=False)
+        self.assertEquals(set([active_e]), set(EntityHistory.objects.all()))
+
+
 class GetSubEntitiesAtTimesTest(TestCase):
     """
     Test the get_sub_entities_at_times function.
