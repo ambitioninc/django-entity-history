@@ -8,7 +8,7 @@ class EntityActivationEvent(models.Model):
     """
     entity = models.ForeignKey(Entity, help_text='The entity that was activated / deactivated')
     time = models.DateTimeField(db_index=True, help_text='The time of the activation / deactivation')
-    was_activated = models.BooleanField(help_text='True if the entity was activated, false otherwise')
+    was_activated = models.BooleanField(default=None, help_text='True if the entity was activated, false otherwise')
 
 
 class EntityRelationshipActivationEvent(models.Model):
@@ -21,7 +21,7 @@ class EntityRelationshipActivationEvent(models.Model):
     super_entity = models.ForeignKey(
         Entity, related_name='+', help_text='The super entity in the relationship that was activated / deactivated')
     time = models.DateTimeField(db_index=True, help_text='The time of the activation / deactivation')
-    was_activated = models.BooleanField(help_text='True if the entity was activated, false otherwise')
+    was_activated = models.BooleanField(default=None, help_text='True if the entity was activated, false otherwise')
 
 
 def get_sub_entities_at_times(super_entity_ids, times, filter_by_entity_ids=None):
@@ -47,7 +47,7 @@ def get_sub_entities_at_times(super_entity_ids, times, filter_by_entity_ids=None
     for t in times:
         # Traverse the entity relationship events in ascending time, keeping track of if a sub entity was in a
         # relationship before time t
-        for er_event in filter(lambda er: er.time < t, er_events):
+        for er_event in [er for er in er_events if er.time < t]:
             if er_event.was_activated:
                 ers[(er_event.super_entity_id, t)].add(er_event.sub_entity_id)
             else:
@@ -75,7 +75,7 @@ def get_entities_at_times(times, filter_by_entity_ids=None):
 
     for t in times:
         # Traverse the entity events in ascending time, keeping track of if an entity was active before time t
-        for e_event in filter(lambda e: e.time < t, e_events):
+        for e_event in [e for e in e_events if e.time < t]:
             if e_event.was_activated:
                 es[t].add(e_event.entity_id)
             else:
