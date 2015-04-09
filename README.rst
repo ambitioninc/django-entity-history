@@ -14,7 +14,7 @@
 
 
 django-entity-history
-===============
+=====================
 
 
 I have failed to provide a good README.rst in my project, and you should shun
@@ -31,10 +31,10 @@ To install the latest code directly from source, type::
     pip install git+git://github.com/ambitioninc/django-entity-history.git
 
 Documentation
-=============
+-------------
 
 Full documentation is available at http://django-entity-history.readthedocs.org
 
 License
-=======
+-------
 MIT License (see LICENSE)

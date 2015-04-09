@@ -1,5 +1,6 @@
 import os
 
+import django
 from django.conf import settings
 
 
@@ -33,6 +34,7 @@ def configure_settings():
             raise RuntimeError('Unsupported test DB {0}'.format(test_db))
 
         settings.configure(
+            MIDDLEWARE_CLASSES=(),
             DATABASES={
                 'default': db_config,
             },
@@ -42,10 +44,9 @@ def configure_settings():
                 'django.contrib.sessions',
                 'django.contrib.admin',
                 'entity',
-                'south',
                 'entity_history',
                 'entity_history.tests',
-            ),
+            ) + (('south',) if django.VERSION[1] <= 6 else ()),
             ROOT_URLCONF='entity_history.urls',
             DEBUG=False,
         )
