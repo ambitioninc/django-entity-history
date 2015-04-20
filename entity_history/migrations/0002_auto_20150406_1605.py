@@ -53,18 +53,49 @@ class Forwards(object):
     )
 
 
+    @staticmethod
+    def create_trigger_if_exists(trigger_name, table_name, creation_sql):
+        """
+        Conditionally create a trigger if it doesn't exist.
+        :param trigger_name: Name of the trigger to create
+        :param table_name: Name of table trigger is created on
+        :param creation_sql: SQL statement to create the trigger
+        :return: The SQL function to conditionally create the trigger if it exists
+        """
+        create_query = """DO
+        $body$
+        DECLARE
+           _trigger_name text := (
+              SELECT tgname
+              FROM (pg_trigger JOIN pg_class ON tgrelid=pg_class.oid) JOIN pg_proc ON (tgfoid=pg_proc.oid)
+              WHERE relname='{table_name}' and tgname='{trigger_name}'
+            );
+        BEGIN
+            IF _trigger_name IS NULL THEN
+                EXECUTE '
+                    {creation_sql} ';
+            END IF;
+        END
+        $body$"""
+        return create_query.format(
+            trigger_name=trigger_name,
+            table_name=table_name,
+            creation_sql=creation_sql
+        )
+
+
 class Backwards(object):
     DROP_TRIGGER_RELATIONSHIP = (
-        'DROP TRIGGER update_entity_relationship_activation_history ON entity_entityrelationship;'
+        'DROP TRIGGER IF EXISTS update_entity_relationship_activation_history ON entity_entityrelationship;'
     )
     DROP_FUNCTION_RELATIONSHIP = (
-        'DROP FUNCTION update_entity_relationship_activation_history();'
+        'DROP FUNCTION IF EXISTS update_entity_relationship_activation_history();'
     )
     DROP_TRIGGER_ACTIVATION = (
-        'DROP TRIGGER update_entity_activation_history ON entity_entity;'
+        'DROP TRIGGER IF EXISTS update_entity_activation_history ON entity_entity;'
     )
     DROP_FUNCTION_ACTIVATION = (
-        'DROP FUNCTION update_entity_activation_history();'
+        'DROP FUNCTION IF EXISTS update_entity_activation_history();'
     )
 
 
@@ -80,7 +111,11 @@ class Migration(migrations.Migration):
             reverse_sql=Backwards.DROP_FUNCTION_ACTIVATION,
         ),
         migrations.RunSQL(
-            sql=Forwards.CREATE_TRIGGER_ACTIVATION,
+            sql=Forwards.create_trigger_if_exists(
+                trigger_name='update_entity_activation_history',
+                table_name='entity_entity',
+                creation_sql=Forwards.CREATE_TRIGGER_ACTIVATION,
+            ),
             reverse_sql=Backwards.DROP_TRIGGER_ACTIVATION
         ),
         migrations.RunSQL(
@@ -88,7 +123,11 @@ class Migration(migrations.Migration):
             reverse_sql=Backwards.DROP_FUNCTION_RELATIONSHIP
         ),
         migrations.RunSQL(
-            sql=Forwards.CREATE_TRIGGER_RELATIONSHIP,
+            sql=Forwards.create_trigger_if_exists(
+                trigger_name='update_entity_relationship_activation_history',
+                table_name='entity_entityrelationship',
+                creation_sql=Forwards.CREATE_TRIGGER_RELATIONSHIP
+            ),
             reverse_sql=Backwards.DROP_TRIGGER_RELATIONSHIP
         ),
     ]

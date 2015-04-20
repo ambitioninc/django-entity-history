@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v0.2.2
+------
+
+* Trigger creation is conditional for Django 1.7
+
 v0.2.1
 ------
 
