@@ -10,6 +10,9 @@ class EntityActivationEvent(models.Model):
     time = models.DateTimeField(db_index=True, help_text='The time of the activation / deactivation')
     was_activated = models.BooleanField(default=None, help_text='True if the entity was activated, false otherwise')
 
+    class Meta:
+        app_label = 'entity_history'
+
 
 class EntityRelationshipActivationEvent(models.Model):
     """
@@ -22,6 +25,9 @@ class EntityRelationshipActivationEvent(models.Model):
         Entity, related_name='+', help_text='The super entity in the relationship that was activated / deactivated')
     time = models.DateTimeField(db_index=True, help_text='The time of the activation / deactivation')
     was_activated = models.BooleanField(default=None, help_text='True if the entity was activated, false otherwise')
+
+    class Meta:
+        app_label = 'entity_history'
 
 
 def get_sub_entities_at_times(super_entity_ids, times, filter_by_entity_ids=None):
