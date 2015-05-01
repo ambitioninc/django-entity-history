@@ -1,6 +1,5 @@
 import os
 
-import django
 from django.conf import settings
 
 
@@ -46,7 +45,7 @@ def configure_settings():
                 'entity',
                 'entity_history',
                 'entity_history.tests',
-            ) + (('south',) if django.VERSION[1] <= 6 else ()),
+            ),
             ROOT_URLCONF='entity_history.urls',
             DEBUG=False,
         )
