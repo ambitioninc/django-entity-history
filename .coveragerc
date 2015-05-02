@@ -2,9 +2,7 @@
 branch = True
 omit =
     entity_history/migrations/*
-    entity_history/tests/*
     entity_history/version.py
-    entity_history/apps.py
 source = entity_history
 [report]
 exclude_lines =
