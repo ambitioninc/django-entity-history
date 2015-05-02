@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+v0.3.0
+------
+
+* Added 1.8 support and dropped 1.6 support for Django
+
 v0.2.2
 ------
 
