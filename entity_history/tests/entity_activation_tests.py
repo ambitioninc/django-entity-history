@@ -4,7 +4,7 @@ from django.test import TestCase
 from django_dynamic_fixture import G, N
 from entity.models import Entity
 
-from entity_history import EntityActivationEvent
+from entity_history.models import EntityActivationEvent
 
 
 class EntityActivationTriggerTests(TestCase):
