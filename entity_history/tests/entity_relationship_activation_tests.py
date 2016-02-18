@@ -4,7 +4,7 @@ from django.test import TransactionTestCase
 from django_dynamic_fixture import G, N
 from entity.models import EntityRelationship, Entity
 
-from entity_history import EntityRelationshipActivationEvent
+from entity_history.models import EntityRelationshipActivationEvent
 
 
 class EntityRelationshipActivationTriggerTests(TransactionTestCase):
