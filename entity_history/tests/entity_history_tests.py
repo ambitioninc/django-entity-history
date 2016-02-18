@@ -4,7 +4,7 @@ from django.test import TestCase
 from django_dynamic_fixture import G
 from entity.models import Entity
 
-from entity_history import (
+from entity_history.models import (
     get_sub_entities_at_times, EntityRelationshipActivationEvent, get_entities_at_times, EntityActivationEvent,
     EntityHistory
 )
