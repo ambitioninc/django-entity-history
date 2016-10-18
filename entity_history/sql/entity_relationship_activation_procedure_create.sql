@@ -65,7 +65,6 @@ BEGIN
 
     ----------------------------------------------------------------------------------------------------
     -- Handle the case where the relationship is removed.
-    -- We check the table name to ensure this was not a cascade delete.
     ----------------------------------------------------------------------------------------------------
     IF (TG_OP = 'DELETE' AND last_history_row_was_activated IS TRUE) THEN
         INSERT INTO entity_history_entityrelationshipactivationevent(
@@ -82,10 +81,6 @@ BEGIN
         );
     END IF;
     RETURN NEW;
-
-EXCEPTION WHEN OTHERS THEN
-    RETURN NEW;
-
 END;
 $body$
 LANGUAGE plpgsql VOLATILE;
