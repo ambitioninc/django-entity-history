@@ -24,6 +24,13 @@ def configure_settings():
                 'USER': 'postgres',
                 'NAME': 'entity_history',
             }
+        elif test_db == 'local':
+            db_config = {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                'USER': 'postgres',
+                'NAME': 'entity_history',
+                'HOST': 'db'
+            }
         elif test_db == 'sqlite':
             db_config = {
                 'ENGINE': 'django.db.backends.sqlite3',

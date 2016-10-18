@@ -117,3 +117,63 @@ class EntityRelationshipActivationTriggerTests(TransactionTestCase):
         self.assertEquals(events[2].sub_entity, sub_entity2)
         self.assertEquals(events[2].super_entity, super_entity2)
         self.assertTrue(t3 <= events[2].time <= t4)
+
+    def test_entity_relationship_duplicated(self):
+        """
+        Test the case when a relationship of the same entities is created multiple times.
+        This should not happen, but lets guard against it anyways
+        """
+
+        # Create the relation
+        entity_relation = G(EntityRelationship)
+
+        # Create a duplicate relation
+        G(
+            EntityRelationship,
+            sub_entity=entity_relation.sub_entity,
+            super_entity=entity_relation.super_entity
+        )
+
+        # We should only have one event
+        event = EntityRelationshipActivationEvent.objects.get()
+        self.assertTrue(event.was_activated)
+
+        # Delete the relations
+        EntityRelationship.objects.all().delete()
+
+        # Assert that we only have one unactivated event
+        events = EntityRelationshipActivationEvent.objects.order_by('time')
+        self.assertEqual(len(events), 2)
+        self.assertTrue(events[0].was_activated)
+        self.assertFalse(events[1].was_activated)
+
+    def test_entity_relationship_multiple_joins(self):
+        """
+        Test the case when an entity joins and leaves a relationship multiple times
+        """
+
+        # Create the relation
+        entity_relation = G(EntityRelationship)
+        sub_entity = entity_relation.sub_entity
+        super_entity = entity_relation.super_entity
+
+        # Delete the relationship
+        entity_relation.delete()
+
+        # Recreate the relationship
+        entity_relation = G(
+            EntityRelationship,
+            sub_entity=sub_entity,
+            super_entity=super_entity
+        )
+
+        # Delete the relationship
+        entity_relation.delete()
+
+        # Assert that we only have the correct events
+        events = EntityRelationshipActivationEvent.objects.order_by('time')
+        self.assertEqual(len(events), 4)
+        self.assertTrue(events[0].was_activated)
+        self.assertFalse(events[1].was_activated)
+        self.assertTrue(events[2].was_activated)
+        self.assertFalse(events[3].was_activated)
