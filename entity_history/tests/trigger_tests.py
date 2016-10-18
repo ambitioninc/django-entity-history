@@ -55,6 +55,7 @@ class EntityRelationshipActivationTriggerTest(TransactionTestCase):
         # Assert that we have an entity activation event
         self.assertFalse(EntityRelationshipActivationEvent.objects.count())
 
+
 class EntityRelationshipActivationImmediateTriggerTest(TransactionTestCase):
     @patch('entity_history.sql.triggers.sys.argv', autospec=True, return_value=[])
     def test_enable(self, mock_sys):

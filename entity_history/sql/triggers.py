@@ -60,5 +60,3 @@ class EntityRelationshipActivationImmediateTrigger(SqlTrigger):
 
         # Call the parent
         super(EntityRelationshipActivationImmediateTrigger, self).enable()
-
-
