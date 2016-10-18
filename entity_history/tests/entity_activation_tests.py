@@ -14,12 +14,14 @@ class EntityActivationTriggerTests(TestCase):
     trigger that is installed in a data migration.
     """
     def test_bulk_create(self):
+        # Create the entities
         es = [N(Entity, is_active=True) for i in range(3)]
         t1 = datetime.utcnow()
         Entity.objects.bulk_create(es)
         t2 = datetime.utcnow()
         es = list(Entity.objects.order_by('id'))
 
+        # Check that the events exist
         events = list(EntityActivationEvent.objects.all())
         self.assertTrue(len(events), 3)
         for i in range(3):
