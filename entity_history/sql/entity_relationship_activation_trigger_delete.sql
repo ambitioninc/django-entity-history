@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS update_entity_relationship_activation_history ON entity_entityrelationship;
