@@ -57,7 +57,7 @@ class EntityRelationshipActivationTriggerTest(TransactionTestCase):
 
 
 class EntityRelationshipActivationImmediateTriggerTest(TransactionTestCase):
-    @patch('entity_history.sql.triggers.sys.argv', autospec=True, return_value=[])
+    @patch('entity_history.sql.triggers.sys.argv', return_value=[])
     def test_enable(self, mock_sys):
         # Enable the trigger
         with self.assertRaises(Exception):
