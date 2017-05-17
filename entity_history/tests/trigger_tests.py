@@ -1,7 +1,6 @@
 from django.test import TransactionTestCase
 from django_dynamic_fixture import G
 from entity.models import Entity, EntityRelationship
-from mock import patch
 
 from entity_history.models import EntityActivationEvent, EntityRelationshipActivationEvent
 
@@ -36,14 +35,9 @@ class EntityActivationTriggerTest(TransactionTestCase):
 
 class EntityRelationshipActivationTriggerTest(TransactionTestCase):
     def test_enable(self):
-        # Enable the trigger
-        EntityRelationshipActivationTrigger().enable()
-
-        # Create an entity
-        G(EntityRelationship)
-
-        # Assert that we have an entity activation event
-        self.assertTrue(EntityRelationshipActivationEvent.objects.count())
+        # Enable the trigger and assert an error is thrown
+        with self.assertRaises(Exception):
+            EntityRelationshipActivationTrigger().enable()
 
     def test_disable(self):
         # Enable the trigger
@@ -52,21 +46,27 @@ class EntityRelationshipActivationTriggerTest(TransactionTestCase):
         # Create an entity relationship
         G(EntityRelationship)
 
-        # Assert that we have an entity activation event
+        # Assert that we do not have an entity activation event
         self.assertFalse(EntityRelationshipActivationEvent.objects.count())
 
 
 class EntityRelationshipActivationImmediateTriggerTest(TransactionTestCase):
-    @patch('entity_history.sql.triggers.sys.argv', return_value=[])
-    def test_enable(self, mock_sys):
-        # Enable the trigger
-        with self.assertRaises(Exception):
-            EntityRelationshipActivationImmediateTrigger().enable()
-
-    def test_enable_in_testing(self):
+    def test_enable(self):
         # Enable the trigger
         EntityRelationshipActivationImmediateTrigger().enable()
+
+        # Create an entity relationship
+        G(EntityRelationship)
+
+        # Assert that we have an entity activation event
+        self.assertTrue(EntityRelationshipActivationEvent.objects.count())
 
     def test_disable(self):
         # Enable the trigger
         EntityRelationshipActivationImmediateTrigger().disable()
+
+        # Create an entity relationship
+        G(EntityRelationship)
+
+        # Assert that we do not have an entity activation event
+        self.assertFalse(EntityRelationshipActivationEvent.objects.count())
