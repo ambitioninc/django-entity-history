@@ -44,15 +44,15 @@ setup(
     install_requires=[
         'django>=1.8',
         'django-entity>=1.13.0',
+        'psycopg2'
     ],
     tests_require=[
-        'psycopg2',
         'django-nose>=1.4',
         'mock>=1.0.1',
         'coverage>=3.7.1',
         'django-dynamic-fixture',
     ],
-    test_suite='run_tests.run_tests',
+    test_suite='run_tests.run',
     include_package_data=True,
     zip_safe=False,
 )
