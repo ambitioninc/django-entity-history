@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -17,7 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(serialize=False, auto_created=True, verbose_name='ID', primary_key=True)),
                 ('time', models.DateTimeField(db_index=True, help_text='The time of the activation / deactivation')),
                 ('was_activated', models.BooleanField(help_text='True if the entity was activated, false otherwise', default=None)),
-                ('entity', models.ForeignKey(help_text='The entity that was activated / deactivated', to='entity.Entity')),
+                ('entity', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, help_text='The entity that was activated / deactivated', to='entity.Entity')),
             ],
             options={
             },
@@ -29,8 +30,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(serialize=False, auto_created=True, verbose_name='ID', primary_key=True)),
                 ('time', models.DateTimeField(db_index=True, help_text='The time of the activation / deactivation')),
                 ('was_activated', models.BooleanField(help_text='True if the entity was activated, false otherwise', default=None)),
-                ('sub_entity', models.ForeignKey(to='entity.Entity', related_name='+', help_text='The sub entity in the relationship that was activated / deactivated')),
-                ('super_entity', models.ForeignKey(to='entity.Entity', related_name='+', help_text='The super entity in the relationship that was activated / deactivated')),
+                ('sub_entity', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='entity.Entity', related_name='+', help_text='The sub entity in the relationship that was activated / deactivated')),
+                ('super_entity', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='entity.Entity', related_name='+', help_text='The super entity in the relationship that was activated / deactivated')),
             ],
             options={
             },
