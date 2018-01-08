@@ -44,7 +44,7 @@ setup(
     ],
     license='MIT',
     install_requires=[
-        'Django>=1.9',
+        'Django>=1.9,<2.0',
         'django-entity>=1.17.0',
         'psycopg2'
     ],
