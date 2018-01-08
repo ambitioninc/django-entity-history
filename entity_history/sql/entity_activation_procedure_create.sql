@@ -50,10 +50,14 @@ BEGIN
         INSERT INTO entity_history_entityactivationevent(
             entity_id,
             time,
+            creation_time,
+            updated_time,
             was_activated
         )
         VALUES (
             NEW.id,
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             NEW.is_active
         );
@@ -65,10 +69,14 @@ BEGIN
         INSERT INTO entity_history_entityactivationevent(
             entity_id,
             time,
+            creation_time,
+            updated_time,
             was_activated
         )
         VALUES (
             NEW.id,
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             TRUE
         );
@@ -80,10 +88,14 @@ BEGIN
         INSERT INTO entity_history_entityactivationevent(
             entity_id,
             time,
+            creation_time,
+            updated_time,
             was_activated
         )
         VALUES (
             NEW.id,
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             FALSE
         );

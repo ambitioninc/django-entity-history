@@ -53,11 +53,15 @@ BEGIN
             sub_entity_id,
             super_entity_id,
             time,
+            creation_time,
+            updated_time,
             was_activated
         )
         VALUES (
             NEW.sub_entity_id,
             NEW.super_entity_id,
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             TRUE
         );
@@ -71,11 +75,15 @@ BEGIN
             sub_entity_id,
             super_entity_id,
             time,
+            creation_time,
+            updated_time,
             was_activated
         )
         VALUES (
             OLD.sub_entity_id,
             OLD.super_entity_id,
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
+            CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             CAST(CLOCK_TIMESTAMP() at time zone 'utc' AS timestamp),
             FALSE
         );

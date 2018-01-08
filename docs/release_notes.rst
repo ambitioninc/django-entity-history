@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+v1.0.1
+------
+* Add updated_time and creation_time to event tables
+
 v1.0.0
 ------
 * Remove python 2.7 support
