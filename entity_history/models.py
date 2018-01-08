@@ -7,7 +7,11 @@ class EntityActivationEvent(models.Model):
     """
     Models an event of an entity being activated or deactivated.
     """
-    entity = models.ForeignKey(Entity, help_text='The entity that was activated / deactivated')
+    entity = models.ForeignKey(
+        Entity,
+        help_text='The entity that was activated / deactivated',
+        on_delete=models.CASCADE
+    )
     time = models.DateTimeField(
         db_index=True,
         default=datetime.utcnow,
@@ -37,9 +41,18 @@ class EntityRelationshipActivationEvent(models.Model):
     are either created or deleted, however, we use the terms activated and deactivated for consistency.
     """
     sub_entity = models.ForeignKey(
-        Entity, related_name='+', help_text='The sub entity in the relationship that was activated / deactivated')
+        Entity,
+        related_name='+',
+        help_text='The sub entity in the relationship that was activated / deactivated',
+        on_delete=models.CASCADE
+
+    )
     super_entity = models.ForeignKey(
-        Entity, related_name='+', help_text='The super entity in the relationship that was activated / deactivated')
+        Entity,
+        related_name='+',
+        help_text='The super entity in the relationship that was activated / deactivated',
+        on_delete=models.CASCADE
+    )
     time = models.DateTimeField(
         db_index=True,
         default=datetime.utcnow,
