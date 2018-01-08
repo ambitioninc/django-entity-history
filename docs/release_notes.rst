@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+v0.8.1
+------
+* Add updated_time and creation_time to event tables
+
 v0.8.0
 ------
 * Add python 3.6 support
