@@ -4,11 +4,11 @@
 .. image:: https://coveralls.io/repos/ambitioninc/django-entity-history/badge.png?branch=develop
     :target: https://coveralls.io/r/ambitioninc/django-entity-history?branch=develop
 
-.. image:: https://pypip.in/v/django-entity-history/badge.png
+.. image:: https://img.shields.io/pypi/v/django-entity-history.svg
     :target: https://crate.io/packages/django-entity-history/
     :alt: Latest PyPI version
 
-.. image:: https://pypip.in/d/django-entity-history/badge.png
+.. image:: https://img.shields.io/pypi/dm/django-entity-history.svg
     :target: https://crate.io/packages/django-entity-history/
     :alt: Number of PyPI downloads
 
