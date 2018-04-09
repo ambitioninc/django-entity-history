@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+v1.1.0
+------
+* Added tox
+
 v1.0.1
 ------
 * Add updated_time and creation_time to event tables
