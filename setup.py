@@ -36,15 +36,14 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Framework :: Django',
-        'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.0',
         'Framework :: Django :: 2.1',
         'Framework :: Django :: 2.2',
     ],
     license='MIT',
     install_requires=[
-        'Django>=1.11',
-        'django-entity>=2.0.0',
+        'Django>=2.0',
+        'django-entity>=4.2.0',
         'psycopg2'
     ],
     tests_require=[
