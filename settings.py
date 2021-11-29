@@ -57,4 +57,5 @@ def configure_settings():
             ),
             ROOT_URLCONF='entity_history.urls',
             DEBUG=False,
+            SECRET_KEY='12345'
         )

@@ -34,7 +34,8 @@ BEGIN
     AND
         super_entity_id = row.super_entity_id
     ORDER BY
-        time DESC
+        time DESC,
+        id DESC
     LIMIT
         1;
 
