@@ -32,7 +32,8 @@ BEGIN
     WHERE
         entity_id = row.id
     ORDER BY
-        time DESC
+        time DESC,
+        id DESC
     LIMIT
         1;
 
