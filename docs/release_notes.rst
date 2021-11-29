@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+v1.3.0
+------
+* Ensure proper ordering by id when times are equal
+
 v1.2.0
 ------
 * Python 3.7
