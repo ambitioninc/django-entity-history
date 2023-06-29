@@ -1,9 +1,8 @@
-import re
-from setuptools import setup, find_packages
-
 # import multiprocessing to avoid this bug (http://bugs.python.org/issue15881#msg170215)
 import multiprocessing
 assert multiprocessing
+import re
+from setuptools import setup, find_packages
 
 
 def get_version():
@@ -18,6 +17,13 @@ def get_version():
         raise RuntimeError('Unable to find version string in {0}.'.format(VERSION_FILE))
 
 
+def get_lines(file_path):
+    return open(file_path, 'r').read().split('\n')
+
+
+install_requires = get_lines('requirements/requirements.txt')
+tests_require = get_lines('requirements/requirements-testing.txt')
+
 setup(
     name='django-entity-history',
     version=get_version(),
@@ -30,27 +36,21 @@ setup(
     packages=find_packages(),
     classifiers=[
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Framework :: Django',
-        'Framework :: Django :: 2.0',
-        'Framework :: Django :: 2.1',
-        'Framework :: Django :: 2.2',
+        'Framework :: Django :: 3.2',
+        'Framework :: Django :: 4.0',
+        'Framework :: Django :: 4.1',
+        'Framework :: Django :: 4.2',
     ],
     license='MIT',
-    install_requires=[
-        'Django>=2.0',
-        'django-entity>=4.2.0',
-        'psycopg2'
-    ],
-    tests_require=[
-        'django-nose>=1.4',
-        'coverage>=3.7.1',
-        'django-dynamic-fixture',
-    ],
+    install_requires=install_requires,
+    tests_require=tests_require,
     test_suite='run_tests.run',
     include_package_data=True,
     zip_safe=False,
