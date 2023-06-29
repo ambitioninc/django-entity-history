@@ -62,5 +62,6 @@ def configure_settings():
             ),
             ROOT_URLCONF='entity_history.urls',
             DEBUG=False,
-            SECRET_KEY='12345'
+            SECRET_KEY='12345',
+            DEFAULT_AUTO_FIELD = 'django.db.models.AutoField',
         )
