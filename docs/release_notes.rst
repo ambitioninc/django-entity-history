@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+v2.0.0
+-------
+Django 3.2 & 4.0 support
+Django <3.2 dropped
+Switched testing to github actions
+
 v1.3.0
 ------
 * Ensure proper ordering by id when times are equal
