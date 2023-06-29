@@ -48,7 +48,6 @@ setup(
     ],
     tests_require=[
         'django-nose>=1.4',
-        'mock>=1.0.1',
         'coverage>=3.7.1',
         'django-dynamic-fixture',
     ],
