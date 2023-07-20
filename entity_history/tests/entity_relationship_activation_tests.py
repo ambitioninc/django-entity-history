@@ -33,7 +33,7 @@ class EntityRelationshipActivationTriggerTests(TransactionTestCase):
         t2 = datetime.utcnow()
 
         events = list(EntityRelationshipActivationEvent.objects.all())
-        self.assertEquals(len(events), 3)
+        self.assertEqual(len(events), 3)
         for i in range(3):
             self.assertTrue(events[i].was_activated)
             self.assertTrue(t1 <= events[i].time <= t2)
@@ -62,8 +62,8 @@ class EntityRelationshipActivationTriggerTests(TransactionTestCase):
 
         event = EntityRelationshipActivationEvent.objects.get()
         self.assertTrue(event.was_activated)
-        self.assertEquals(event.sub_entity, er.sub_entity)
-        self.assertEquals(event.super_entity, er.super_entity)
+        self.assertEqual(event.sub_entity, er.sub_entity)
+        self.assertEqual(event.super_entity, er.super_entity)
         self.assertTrue(t1 <= event.time <= t2)
 
     def test_entity_relationship_creation_deletion(self):
@@ -78,13 +78,13 @@ class EntityRelationshipActivationTriggerTests(TransactionTestCase):
         events = list(EntityRelationshipActivationEvent.objects.order_by('time', 'id'))
 
         self.assertTrue(events[0].was_activated)
-        self.assertEquals(events[0].sub_entity, sub_entity)
-        self.assertEquals(events[0].super_entity, super_entity)
+        self.assertEqual(events[0].sub_entity, sub_entity)
+        self.assertEqual(events[0].super_entity, super_entity)
         self.assertTrue(t1 <= events[0].time <= t2)
 
         self.assertFalse(events[1].was_activated)
-        self.assertEquals(events[1].sub_entity, sub_entity)
-        self.assertEquals(events[1].super_entity, super_entity)
+        self.assertEqual(events[1].sub_entity, sub_entity)
+        self.assertEqual(events[1].super_entity, super_entity)
         self.assertTrue(t2 <= events[1].time <= t3)
 
     def test_entity_relationship_creation_deletion_creation_save(self):
@@ -104,18 +104,18 @@ class EntityRelationshipActivationTriggerTests(TransactionTestCase):
         events = list(EntityRelationshipActivationEvent.objects.order_by('time', 'id'))
 
         self.assertTrue(events[0].was_activated)
-        self.assertEquals(events[0].sub_entity, sub_entity1)
-        self.assertEquals(events[0].super_entity, super_entity1)
+        self.assertEqual(events[0].sub_entity, sub_entity1)
+        self.assertEqual(events[0].super_entity, super_entity1)
         self.assertTrue(t1 <= events[0].time <= t2)
 
         self.assertFalse(events[1].was_activated)
-        self.assertEquals(events[1].sub_entity, sub_entity1)
-        self.assertEquals(events[1].super_entity, super_entity1)
+        self.assertEqual(events[1].sub_entity, sub_entity1)
+        self.assertEqual(events[1].super_entity, super_entity1)
         self.assertTrue(t2 <= events[1].time <= t3)
 
         self.assertTrue(events[2].was_activated)
-        self.assertEquals(events[2].sub_entity, sub_entity2)
-        self.assertEquals(events[2].super_entity, super_entity2)
+        self.assertEqual(events[2].sub_entity, sub_entity2)
+        self.assertEqual(events[2].super_entity, super_entity2)
         self.assertTrue(t3 <= events[2].time <= t4)
 
     def test_entity_relationship_multiple_joins(self):
