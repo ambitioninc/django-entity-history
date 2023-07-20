@@ -25,7 +25,7 @@ class EntityActivationTriggerTests(TestCase):
         events = list(EntityActivationEvent.objects.all())
         self.assertTrue(len(events), 3)
         for i in range(3):
-            self.assertEquals(events[i].entity, es[i])
+            self.assertEqual(events[i].entity, es[i])
             self.assertTrue(t1 <= events[i].time <= t2)
 
     def test_bulk_create_update(self):
@@ -41,7 +41,7 @@ class EntityActivationTriggerTests(TestCase):
         events = list(EntityActivationEvent.objects.all())
         self.assertTrue(len(events), 6)
         for i in range(3):
-            self.assertEquals(events[i].entity, es[i])
+            self.assertEqual(events[i].entity, es[i])
             self.assertTrue(t1 <= events[i].time <= t2)
             self.assertTrue(events[i].was_activated)
 
@@ -52,7 +52,7 @@ class EntityActivationTriggerTests(TestCase):
             self.assertTrue(t2 <= events[i].time <= t3)
             self.assertFalse(events[i].was_activated)
             deactivated.append(events[i].entity)
-        self.assertEquals(set(deactivated), set(es))
+        self.assertEqual(set(deactivated), set(es))
 
     def test_entity_creation_activated(self):
         t1 = datetime.utcnow()
@@ -61,7 +61,7 @@ class EntityActivationTriggerTests(TestCase):
 
         event = EntityActivationEvent.objects.get()
         self.assertTrue(event.was_activated)
-        self.assertEquals(event.entity, e)
+        self.assertEqual(event.entity, e)
         self.assertTrue(t1 <= event.time <= t2)
 
     def test_entity_creation_deactivated(self):
@@ -71,7 +71,7 @@ class EntityActivationTriggerTests(TestCase):
 
         event = EntityActivationEvent.objects.get()
         self.assertFalse(event.was_activated)
-        self.assertEquals(event.entity, e)
+        self.assertEqual(event.entity, e)
         self.assertTrue(t1 <= event.time <= t2)
 
     def test_update_inactive_to_active(self):
@@ -85,11 +85,11 @@ class EntityActivationTriggerTests(TestCase):
         events = list(EntityActivationEvent.objects.order_by('time', 'id'))
 
         self.assertFalse(events[0].was_activated)
-        self.assertEquals(events[0].entity, e)
+        self.assertEqual(events[0].entity, e)
         self.assertTrue(t1 <= events[0].time <= t2)
 
         self.assertTrue(events[1].was_activated)
-        self.assertEquals(events[1].entity, e)
+        self.assertEqual(events[1].entity, e)
         self.assertTrue(t2 <= events[1].time <= t3)
 
     def test_update_inactive_to_active_to_active(self):
@@ -105,11 +105,11 @@ class EntityActivationTriggerTests(TestCase):
         events = list(EntityActivationEvent.objects.order_by('time', 'id'))
 
         self.assertFalse(events[0].was_activated)
-        self.assertEquals(events[0].entity, e)
+        self.assertEqual(events[0].entity, e)
         self.assertTrue(t1 <= events[0].time <= t2)
 
         self.assertTrue(events[1].was_activated)
-        self.assertEquals(events[1].entity, e)
+        self.assertEqual(events[1].entity, e)
         self.assertTrue(t2 <= events[1].time <= t3)
 
     def test_update_inactive_to_active_to_active_to_inactive(self):
@@ -128,13 +128,13 @@ class EntityActivationTriggerTests(TestCase):
         events = list(EntityActivationEvent.objects.order_by('time', 'id'))
 
         self.assertFalse(events[0].was_activated)
-        self.assertEquals(events[0].entity, e)
+        self.assertEqual(events[0].entity, e)
         self.assertTrue(t1 <= events[0].time <= t2)
 
         self.assertTrue(events[1].was_activated)
-        self.assertEquals(events[1].entity, e)
+        self.assertEqual(events[1].entity, e)
         self.assertTrue(t2 <= events[1].time <= t3)
 
         self.assertFalse(events[2].was_activated)
-        self.assertEquals(events[2].entity, e)
+        self.assertEqual(events[2].entity, e)
         self.assertTrue(t3 <= events[2].time <= t4)
