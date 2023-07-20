@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-v2.0.1
+v2.0.2
 -------
 * Django 3.2 & 4.0 support
 * Django <3.2 dropped
