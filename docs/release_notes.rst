@@ -1,11 +1,11 @@
 Release Notes
 =============
 
-v2.0.0
+v2.0.1
 -------
-Django 3.2 & 4.0 support
-Django <3.2 dropped
-Switched testing to github actions
+* Django 3.2 & 4.0 support
+* Django <3.2 dropped
+* Switched testing to github actions
 
 v1.3.0
 ------
