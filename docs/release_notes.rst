@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+v2.0.3
+------
+* Removed psycopg2 from requirements
+
 v2.0.2
 -------
 * Django 3.2 & 4.0 support
